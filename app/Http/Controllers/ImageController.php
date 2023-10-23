@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Images;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use App\Traits\ImageServiceTrait;
+use Illuminate\Support\Facades\Auth;
 
 class ImageController extends Controller
 {
+    use ImageServiceTrait;
     //
     /**
      * Display a listing of the resource.
@@ -17,10 +21,15 @@ class ImageController extends Controller
         try {
             $images = Images::all();
             
+            // Mapea las imágenes para construir la URL completa
+            $image = $images->map(function ($image) {
+                $image->url = url($image->url); // Asumiendo que la columna que almacena la URL de la imagen se llama 'url'
+                return $image;
+            });
             return response()->json([
                 'status' => 'success',
                 'message' => 'Images retrieved successfully.',
-                'data' => $images
+                'data' => $image
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error fetching images: ' . $e->getMessage());
@@ -38,8 +47,13 @@ class ImageController extends Controller
     public function store(Request $request)
     {
         try {
+            $user = User::findOrFail(Auth::id());
             $image = Images::create($request->all());
 
+            if($image) {
+                $responseDataStorage = ($this->UploadImage($request, 'url', "images/$user->first_name"));
+                $image->update(['url'=>$responseDataStorage['data']]);
+            }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Image created successfully.',

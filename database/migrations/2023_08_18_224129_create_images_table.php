@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->string('url');
-            $table->string('status', 50);
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('url')->nullable();
+            $table->string('status', 50)->nullable();
+            $table->string('activity', 255)->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

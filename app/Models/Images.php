@@ -14,6 +14,7 @@ class Images extends Model
         'description',
         'url',
         'status',
+        'activity',
         'user_id',
         'created_at',
         'updated_at'

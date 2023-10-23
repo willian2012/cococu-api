@@ -29,9 +29,10 @@ Route::get('projects', [ProjectController::class, 'index']);
 Route::get('activities', [ActivityController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function(){
+    Route::post('avatar/{user_id}', [UserController::class, 'uploadAvatar']);
+    Route::put('changepassword/{user_id}', [UserController::class, 'changePassword']);
     Route::resource('users', UserController::class);
     Route::get('logout', [AuthController::class, 'logout']);
-    Route::post('verifypassword', [UserController::class, 'verifyPassword']);
     Route::resource('roles', RoleController::class);
     Route::resource('product', ProductController::class);
     Route::resource('image', ImageController::class);

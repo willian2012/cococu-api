@@ -28,8 +28,19 @@ class AuthController extends Controller
         } 
 
         $user = User::where('email', $request['email'])->firstOrFail();
+        // Obtén la URL completa del avatar utilizando el método getAttribute
+        $avatarUrl = $user->getAttribute('avatar');
+        
+        // Comprobar si la URL del avatar no está vacía y construir la URL completa
+        if (!empty($avatarUrl)) {
+            // Parsear la URL con la ruta completa
+            $avatarUrl = url($avatarUrl);
+        }
+        
+        // Actualiza el atributo "avatar" en el modelo del usuario con la URL completa
+        $user->setAttribute('avatar', $avatarUrl);
+        
         $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()
             ->json([
                 'message' => 'Authentiqued',
