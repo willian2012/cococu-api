@@ -21,7 +21,7 @@ use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [UserController::class, 'store']);
 Route::get('images', [ImageController::class, 'index']);
 Route::get('products', [ProductController::class, 'index']);
@@ -31,13 +31,18 @@ Route::get('activities', [ActivityController::class, 'index']);
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::post('avatar/{user_id}', [UserController::class, 'uploadAvatar']);
     Route::put('changepassword/{user_id}', [UserController::class, 'changePassword']);
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->only(['index', 'store', 'show', 'destroy']);
+    Route::post('users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::get('logout', [AuthController::class, 'logout']);
     Route::resource('roles', RoleController::class);
-    Route::resource('product', ProductController::class);
-    Route::resource('image', ImageController::class);
-    Route::resource('project', ProjectController::class);
-    Route::resource('activity', ActivityController::class);
+    Route::resource('product', ProductController::class)->only(['index', 'store', 'show', 'destroy']);
+    Route::post('product/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::resource('image', ImageController::class)->only(['index', 'store', 'show', 'destroy']);
+    Route::post('image/{id}', [ImageController::class, 'update'])->name('image.update');
+    Route::resource('project', ProjectController::class)->only(['index', 'store', 'show', 'destroy']);
+    Route::post('project/{id}', [ProjectController::class, 'update'])->name('project.update');
+    Route::resource('activity', ActivityController::class)->only(['index', 'store', 'show', 'destroy']);
+    Route::post('activity/{id}', [ActivityController::class, 'update'])->name('activity.update');
     Route::resource('participantproject', ProjectParticipantsController::class);
     Route::resource('participantactivity', ActivityParticipantsController::class);
     Route::get('participantactivities/{user_id}', [ActivityParticipantsController::class, 'getActivitiesForUser']);
