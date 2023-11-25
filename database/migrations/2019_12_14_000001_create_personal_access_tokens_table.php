@@ -21,11 +21,12 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
 
             // Especifica la longitud máxima del índice compuesto
-            $table->index(['tokenable_type', 'tokenable_id']);
+            $table->index(['tokenable_type', 'tokenable_id'], 'personal_access_tokens_type_id_index', ['length' => ['tokenable_type' => 191, 'tokenable_id' => 191]]);
 
             $table->timestamps();
         });
     }
+
 
 
 
