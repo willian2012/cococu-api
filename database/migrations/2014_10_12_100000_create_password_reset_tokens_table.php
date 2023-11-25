@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->id();
-            $table->string('email', 255)->unique();
-            $table->string('token', 255);
-            $table->timestamp('created_at')->nullable();
+            $table->string('email', 191)->unique(); // Ajusta la longitud según tus necesidades
+            $table->string('token', 191);
+            $table->timestamps(); // Esto añade created_at y updated_at automáticamente
         });
     }
+
 
     /**
      * Reverse the migrations.
