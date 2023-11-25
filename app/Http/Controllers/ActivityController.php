@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Activities;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Traits\ImageServiceTrait;
 
 class ActivityController extends Controller
 {
-    use ImageServiceTrait;
-
     /**
      * Display a listing of the resource.
      */
@@ -18,13 +15,7 @@ class ActivityController extends Controller
     {
         try {
             $activities = Activities::all();
-
-            $activities = $activities->map(function ($activity) {
-                $activity->image = url($activity->image); // Asumiendo que la columna que almacena la URL de la imagen se llama 'image'
-                $activity->cost = number_format($activity->cost, 0, ',', '.') . ' COP';
-                return $activity;
-            });
-
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Activities retrieved successfully.',
@@ -32,10 +23,10 @@ class ActivityController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error fetching activities: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while fetching activities.',
+                'data' => null
             ], 500);
         }
     }
@@ -46,17 +37,7 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
-                'image' => 'required|image|max:2048',
-                // Puedes agregar más validaciones aquí según tus requisitos.
-            ]);
-
             $activity = Activities::create($request->all());
-
-            if ($activity) {
-                $responseDataStorage = $this->uploadImage($request, 'image', "images/activities");
-                $activity->update(['image' => $responseDataStorage['data']]);
-            }
 
             return response()->json([
                 'status' => 'success',
@@ -65,10 +46,10 @@ class ActivityController extends Controller
             ], 201);
         } catch (\Exception $e) {
             Log::error('Error creating activity: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while creating the activity.',
+                'data' => null
             ], 500);
         }
     }
@@ -88,10 +69,10 @@ class ActivityController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error fetching activity: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while fetching the activity.',
+                'data' => null
             ], 500);
         }
     }
@@ -102,29 +83,20 @@ class ActivityController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $request->validate([
-                'image' => 'image|max:2048',
-            ]);
-
             $activity = Activities::findOrFail($id);
-            $save = $activity->update($request->all());
-            
-            if ($save && $request->hasFile('image')) {
-                $responseDataStorage = $this->uploadImage($request, 'image', "images/activities");
-                $activity->update(['image' => $responseDataStorage['data']]);
-            }
+            $activity->update($request->all());
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Activity updated successfully.',
+                'message' => 'activity updated successfully.',
                 'data' => $activity
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error updating activity: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while updating the activity.',
+                'data' => null
             ], 500);
         }
     }
@@ -141,13 +113,14 @@ class ActivityController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Activity deleted successfully.',
+                'data' => null
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error deleting activity: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while deleting the activity.',
+                'data' => null
             ], 500);
         }
     }

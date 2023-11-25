@@ -12,14 +12,14 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->text('description')->nullable();
-            $table->decimal('price', 10, 2)->nullable();
-            $table->text('image')->nullable();
-            $table->integer('quantity')->nullable();
-            $table->string('status', 50)->nullable();
-            $table->string('seller')->nullable();
-            $table->string('phone', 20)->nullable();
+            $table->string('name');
+            $table->text('description');
+            $table->decimal('price', 10, 2);
+            $table->text('image');
+            $table->integer('quantity');
+            $table->string('status', 50);
+            $table->string('seller');
+            $table->string('phone', 20);
             $table->timestamps();
             
         });

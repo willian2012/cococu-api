@@ -48,11 +48,6 @@ class ImageController extends Controller
     {
         try {
             $user = User::findOrFail(Auth::id());
-
-            $request->validate([
-                'url' => 'required|image|max:2048',
-            ]);
-
             $image = Images::create($request->all());
 
             if($image) {
@@ -103,15 +98,9 @@ class ImageController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $request->validate([
-                'image' => 'image|max:2048',
-            ]);
             $image = Images::findOrFail($id);
-            $save = $image->update($request->all());
-            if ($save && $request->hasFile('url')) {
-                $responseDataStorage = $this->uploadImage($request, 'url', "images/gallery");
-                $image->update(['url' => $responseDataStorage['data']]);
-            }
+            $image->update($request->all());
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Image updated successfully.',

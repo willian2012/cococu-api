@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Traits\ImageServiceTrait;
 
 class ProjectController extends Controller
 {
-    use ImageServiceTrait;
     /**
      * Display a listing of the resource.
      */
@@ -18,12 +16,7 @@ class ProjectController extends Controller
         //
         try {
             $projects = Project::all();
-            // Mapea las imágenes para construir la URL completa
-            $project = $projects->map(function ($project) {
-                $project->image = url($project->image); // Asumiendo que la columna que almacena la URL de la imagen se llama 'url'
-                $project->cost = number_format($project->cost, 0, ',', '.') . ' COP';
-                return $project;
-            });
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Projects retrieved successfully.',
@@ -45,16 +38,8 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
-                'image' => 'required|image|max:2048', // El valor 2048 representa 2 MB (2 * 1024)
-            ]);
             $project = Project::create($request->all());
 
-
-            if($project) {
-                $responseDataStorage = ($this->UploadImage($request, 'image', "images/projects"));
-                $project->update(['image'=>$responseDataStorage['data']]);
-            }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Project created successfully.',
@@ -99,15 +84,9 @@ class ProjectController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $request->validate([
-                'image' => 'image|max:2048',
-            ]);
             $project = Project::findOrFail($id);
-            $save = $project->update($request->all());
-            if ($save && $request->hasFile('image')) {
-                $responseDataStorage = $this->uploadImage($request, 'image', "images/projects");
-                $project->update(['image' => $responseDataStorage['data']]);
-            }
+            $project->update($request->all());
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Project updated successfully.',

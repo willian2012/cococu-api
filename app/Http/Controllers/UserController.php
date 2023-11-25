@@ -18,11 +18,6 @@ class UserController extends Controller
     {
         try {
             $users = User::all();
-            // Mapea las imágenes para construir la URL completa
-            $user = $users->map(function ($user) {
-                $user->avatar = url($user->avatar); // Asumiendo que la columna que almacena la URL de la imagen se llama 'url'
-                return $user;
-            });
             return response()->json([
                 'status' => 'success',
                 'message' => 'Users retrieved successfully',
