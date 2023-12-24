@@ -84,19 +84,19 @@ class ActivityParticipantsController extends Controller
             $activities = ActivityParticipants::where('user_id', $user_id)
                 ->with('activity') // Carga la relación "activity" para obtener los detalles de la actividad
                 ->get();
-            if ($activities->isEmpty()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'The user with activities is not registered',
-                    'data' => null
-                ], 404);
-            } else {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Activities for the user retrieved successfully',
-                    'data' => $activities
-                ], 200);
-            }
+                if ($activities->isEmpty()) {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'No activities found for the user.',
+                        'data' => []
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Activities for the user retrieved successfully',
+                        'data' => $activities
+                    ], 200);
+                }
             
         } catch (\Exception $e) {
             Log::error('Error fetching user activities: ' . $e->getMessage());
